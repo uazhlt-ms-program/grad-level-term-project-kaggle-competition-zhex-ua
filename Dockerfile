@@ -1,24 +1,16 @@
-FROM pytorch/pytorch:1.9.1-cuda11.1-cudnn8-runtime
+# python 3.10 chosen to match the wheel range of the pinned numpy/scipy/sklearn/pandas
+FROM python:3.10-slim
 
-LABEL author="Gus Hahn-Powell"
-LABEL description="Default container definition for class competition."
+LABEL description="TF-IDF + Logistic Regression baseline for the review classifier."
 
-# Create app directory
 WORKDIR /app
 
-RUN pip install -U pytorch-lightning \
-    graphviz==0.16 \
-    "ipython>=7.20.0,<8" \
-    notebook==6.4.6 \
-    jupyter-client==7.1.2 \
-    jupyter-contrib-nbextensions==0.5.1 \
-    && jupyter contrib nbextension install --user
+COPY requirements-baseline.txt ./
+RUN pip install --no-cache-dir -r requirements-baseline.txt
 
-# copy executables to path
-COPY . ./
-RUN chmod u+x  scripts/* \
-    && mv scripts/* /usr/local/bin/ \
-    && rmdir scripts
+COPY scripts/ ./scripts/
 
-# launch jupyter by default
-CMD ["/bin/bash", "launch-notebook"]
+# data is mounted at runtime, e.g.
+#   docker run --rm -v "$PWD/data:/app/data" marvin-baseline
+ENTRYPOINT ["python", "scripts/main.py"]
+CMD ["--data-dir", "data", "--output", "data/submission.csv"]
