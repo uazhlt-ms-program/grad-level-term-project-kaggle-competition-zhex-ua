@@ -14,7 +14,8 @@ The training distribution is mildly skewed toward class 0:
 
 Two quick analyses on the training set turn out to be very informative for modeling decisions.
 
-**Document length**: Class 0 is dramatically shorter than the two review classes; classes 1 and 2 are almost identical on length:
+### Length
+Class 0 is dramatically shorter than the two review classes; classes 1 and 2 are almost identical on length:
 
 | class            | mean words | median words | mean chars | median chars |
 |------------------|-----------:|-------------:|-----------:|-------------:|
@@ -22,9 +23,10 @@ Two quick analyses on the training set turn out to be very informative for model
 | 1 (positive)     |        207 |          152 |      1,171 |          842 |
 | 2 (negative)     |        208 |          157 |      1,164 |          869 |
 
-So length is a strong cue for *review vs. non-review*, but carries essentially zero information about *positive vs. negative*. The model has to rely on lexical content for the latter distinction.
+So length is a strong cue for review vs. non-review, but carries essentially zero information about positive vs. negative. The model has to rely on lexical content for the latter distinction.
 
-**Distinguishing vocabulary**: Top unigrams per class by smoothed log-odds vs. the rest of the corpus (`min_df=20`, `max_df=0.5`, top-10 shown):
+### Vocabulary
+Top unigrams per class by smoothed log-odds vs. the rest of the corpus (`min_df=20`, `max_df=0.5`, top-10 shown):
 
 - 0: `kaj`, `行者道`, `руб`, `сколько`, `по`, `на`, `八戒道`, `說著`, `estis`, `raskolnikov` 
 - 1: `fido`, `kinnear`, `eisenstein`, `matthau`, `sammo`, `visconti`, `bakshi`, `kazan`, `kieslowski`, `grint`
@@ -78,20 +80,20 @@ Repository: <https://github.com/uazhlt-ms-program/grad-level-term-project-kaggle
 
 The whole pipeline runs in a Docker container. no local Python setup required. On a Linux/macOS machine with Docker installed:
 
-**1. Clone the repo.**
+#### 1. Clone the repo.
 
 ```bash
 git clone https://github.com/uazhlt-ms-program/grad-level-term-project-kaggle-competition-zhex-ua.git
 cd grad-level-term-project-kaggle-competition-zhex-ua
 ```
 
-**2. Get the dataset.**
+#### 2. Get the dataset.
 
 Download `train.csv` and `test.csv` from the Kaggle competition page and place them under `data/`. 
 
 The `data/` directory is intentionally untracked — Docker mounts it at runtime, so the files never need to live inside the image.
 
-**3. Build the image.**
+#### 3. Build the image.
 
 ```bash
 docker build -t marvin-baseline .
@@ -99,7 +101,7 @@ docker build -t marvin-baseline .
 
 This pulls `python:3.10-slim` (~150 MB) and installs the four pinned dependencies from [`requirements.txt`](requirements.txt) (`numpy`, `scipy`, `pandas`, `scikit-learn`). First build takes ~1 minute.
 
-**4. Train and produce the submission.**
+#### 4. Train and produce the submission.
 
 ```bash
 docker run --rm -v "$PWD/data:/app/data" marvin-baseline \
