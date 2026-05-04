@@ -5,8 +5,8 @@ LABEL description="TF-IDF + Logistic Regression baseline for the review classifi
 
 WORKDIR /app
 
-COPY requirements-baseline.txt ./
-RUN pip install --no-cache-dir -r requirements-baseline.txt
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY scripts/ ./scripts/
 
